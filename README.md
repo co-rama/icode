@@ -1,2 +1,2 @@
-# icode
-technology, products and brands
+# Icode
+Decoupled API code

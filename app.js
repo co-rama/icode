@@ -1,14 +1,23 @@
 const express = require("express");
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 const path = require("path");
 
 const app = express();
+const feedRoutes = require("./routes/feed");
 
 //MIDDLEWARES
-app.use(bodyParser.json());
+app.use(bodyParser.json()); //application/json
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "*"
+  );
+  res.setHeader("Access-Control-Headers", "Content-type, Authorization");
+  next();
+});
 
 //FEED ROUTES
-const feedRoutes = require("./routes/feed");
 app.use("/feed", feedRoutes);
 
 const PORT = 3000;

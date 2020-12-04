@@ -1,11 +1,11 @@
-const { validationResult } = require("express-validator/check");
+const { validationResult } = require("express-validator");
 exports.getPosts = (req, res, next) => {
   res.status(200).json({
     posts: [
       {
         _id: "1",
-        title: "First post",
-        content: "This is the first Post",
+        title: "Bread Share",
+        content: "This is the first Bread Share Post",
         imageUrl: "images/home.png",
         creator: {
           name: "Corama",

@@ -8,7 +8,6 @@ exports.getPosts = (req, res, next) => {
       error.statusCode = 404;
       throw error;
     }
-    console.log(posts);
     res.status(200).json({message : 'Posts were found and fetched successfully', posts: posts})
   })
   .catch(err => {
@@ -45,11 +44,18 @@ exports.createPost = (req, res, next) => {
   }
   const title = req.body.title;
   const content = req.body.content;
+  console.log(req.body)
+  if(!req.file){
+    const error = new Error('No image file provided');
+    error.statusCode = 422;
+    throw error;
+  }
+  const imageUrl = req.file.path;
   //DB resosurce
   const post = new Post({
     title: title,
     content: content,
-    imageUrl: "images/duck.jpg",
+    imageUrl: imageUrl,
     creator: {
       name: "Corama",
     },
@@ -74,6 +80,7 @@ exports.createPost = (req, res, next) => {
 
 exports.getPost = (req, res, next) => {
   const postId = req.params.postId;
+  // console.log(postId);
   Post.findById(postId)
   .exec()
   .then(post => {
@@ -82,7 +89,7 @@ exports.getPost = (req, res, next) => {
       error.statusCode = 404;
       throw error;
     }
-    res.status(201).json({message : 'Post was found.', post: post});
+    res.status(200).json({message : 'Post was found.', post: post});
   })
   .catch(err => {
     if(!err.statusCode){

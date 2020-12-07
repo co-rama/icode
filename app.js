@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const cors = require("cors");
 const mongoose = require("mongoose");
+const mutler = require('multer');
 require("dotenv").config();
 
 const app = express();
@@ -14,6 +15,7 @@ const MONGODB_URI = process.env.MONGODB_URI;
 //MIDDLEWARES
 app.use(bodyParser.json()); //application/json
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use('/images', express.static(path.join(__dirname + path.join('images'))));
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "*");
@@ -29,12 +31,25 @@ app.use((req, res, next) => {
 //FEED ROUTES
 app.use("/feed", feedRoutes);
 
+app.use((err, req, res, next) => {
+  console.error(err);
+  const status = err.statusCode || 500;
+  const message = err.message;
+  res.status(status).json({message : message});
+  next();
+});
+
 mongoose.connect(
   MONGODB_URI,
   { useNewUrlParser: true, useUnifiedTopology: true },
   (err) => {
-    if (err) {
-      console.log(err);
+    if (err != null) {
+      app.listen(PORT, null, error => {
+        if(!error){
+         return console.log('Mongoose is not connected due to low internet connectivity\nListening to PORT: ' + PORT);
+        }
+        console.log(error);
+      })
       return;
     }
     app.listen(PORT, null, (error) => {
